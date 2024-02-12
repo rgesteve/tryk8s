@@ -93,6 +93,9 @@ resource nic 'Microsoft.Network/networkInterfaces@2020-07-01' = {
 resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name      : vmname
   location  : location
+  tags : {
+    applicationRole: 'controller'
+  }
   properties: {
     hardwareProfile: {
       //vmSize: 'Standard_B2ms'
@@ -165,6 +168,9 @@ resource nicvm 'Microsoft.Network/networkInterfaces@2020-07-01' = {
 resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name      : '${vmname}_worker'
   location  : location
+  tags : {
+    applicationRole: 'worker'
+  }
   properties: {
     hardwareProfile: {
       //vmSize: 'Standard_B2ms'
