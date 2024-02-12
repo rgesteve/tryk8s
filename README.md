@@ -11,10 +11,30 @@ ssh-keygen <ssh options> -C "<username>@azure" -f <keypair>
 keychain --eval <keypair>    # or use `ssh-add` directly
 
 az deployment group create --resource-group $RGNAME --template-file infra.bicep --parameters vmname=<vmname> vmuser=<username> publickey="$(< <keypair>.pub)"
-az deployment group show -g $RGNAME -n infra --query properties.outputs.sshCommand
-# Show internal IPs of the workers
-az deployment group show -g $RGNAME -n infra --query properties.outputs.privateIPAddress
+```
 
+You can check the details to log on to the jumpbox/controller:
+```
+az deployment group show -g $RGNAME -n infra --query properties.outputs.sshCommand
+```
+
+As well as list the internal IPs of the workers (right now there's only one worker)
+```
+az deployment group show -g $RGNAME -n infra --query properties.outputs.privateIPAddress
+```
+
+Now you can log on to the jumpbox using the keypair created above:
+```
 ssh -A -i <keypair>  <username>@<output_of_show>
 ```
+From there you can log on to any of the workers using their private IP:
+```
+ssh <private_ip_of_worker>
+```
+
+## TODO
+
+* Add parameter to create configurable number of workers
+* Use appropriate hostnames
+* Add ansible-based configuration to provision k8s packages
 
