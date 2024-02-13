@@ -166,7 +166,7 @@ resource nicvm 'Microsoft.Network/networkInterfaces@2020-07-01' = {
 }
 
 var nicNameLinux = 'nic-linux-'
-param linuxVMCount int = 1
+param linuxVMCount int = 2
 // https://github.com/microsoft/Federal-App-Innovation-Community/blob/2f31d83a1f1b86753349a437538984206b620964/topics/kubernetes/solutions/aro-kubernetes/hub-spoke-deployment/landing-zone.bicep#L569
 resource nicNameLinuxResource 'Microsoft.Network/networkInterfaces@2020-07-01' = [for i in range(0, linuxVMCount): {
   name: '${nicNameLinux}${i + 1}'
@@ -189,7 +189,7 @@ resource nicNameLinuxResource 'Microsoft.Network/networkInterfaces@2020-07-01' =
 
 var commonProfile = {
   hardwareProfile : {
-    vmSize: 'Standard_D8_v5'
+    vmSize: 'Standard_D4_v5'
   }
   storageProfile: {
       imageReference: {
@@ -199,7 +199,7 @@ var commonProfile = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmname}-osdisk-worker'
+        // name: '${vmname}-osdisk-worker' // avoid naming when sharing the spec across VM creation
         createOption: 'FromImage'
         caching: 'ReadWrite'
         managedDisk: {
@@ -287,27 +287,28 @@ var commonProfile = {
 //   }
 // }
 
-// resource vmNameLinuxResource 'Microsoft.Compute/virtualMachines@2019-07-01' = [for i in range(0, linuxVMCount): {
-//   name: '${vmname}worker${i + 1}'
-//   location: location
-//   dependsOn:[
-//     nicNameLinuxResource
-//   ]
-//   properties: {
-//     hardwareProfile : commonProfile.hardwareProfile
-//     storageProfile : commonProfile.storageProfile
-//     osProfile: commonProfile.osProfile
-//     networkProfile: {
-//       networkInterfaces: [
-//         {
-//           id: resourceId('Microsoft.Network/networkInterfaces', '${nicNameLinux}${i + 1}')
-//         }
-//       ]
-//     }
-//   }
-// }]
+resource vmNameLinuxResource 'Microsoft.Compute/virtualMachines@2019-07-01' = [for i in range(0, linuxVMCount): {
+  name: '${vmname}worker${i + 1}'
+  location: location
+  dependsOn:[
+    nicNameLinuxResource
+  ]
+  properties: {
+    hardwareProfile : commonProfile.hardwareProfile
+    storageProfile : commonProfile.storageProfile
+    osProfile: commonProfile.osProfile
+    networkProfile: {
+      networkInterfaces: [
+        {
+          id: resourceId('Microsoft.Network/networkInterfaces', '${nicNameLinux}${i + 1}')
+        }
+      ]
+    }
+  }
+}]
 
 output adminUsername string = vmuser
 output hostname string = pip.properties.dnsSettings.fqdn
-output privateIPAddress string = nicvm.properties.ipConfigurations[0].properties.privateIPAddress
+// should get this from `az vm list` instead
+//output privateIPAddress string = nicvm.properties.ipConfigurations[0].properties.privateIPAddress
 output sshCommand string = 'ssh ${vmuser}@${pip.properties.dnsSettings.fqdn}'

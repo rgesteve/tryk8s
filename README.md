@@ -32,9 +32,12 @@ From there you can log on to any of the workers using their private IP:
 ssh <private_ip_of_worker>
 ```
 
+## KNOWN ISSUES
+
+* If you get a 'core quota exceeded' error, balance the `linuxVMCount` parameter with the VM size (in `commonProfile.hardwareProfile`)
+
 ## TODO
 
-* Add parameter to create configurable number of workers
 * Use appropriate hostnames
 * Add ansible-based configuration to provision k8s packages
 
