@@ -1,6 +1,7 @@
 @description('The name of you Virtual Machine.')
 param vmname    string
 param vmuser    string
+param controllercount int = 2
 // @secure()
 // param vmpass    string
 @description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
@@ -166,9 +167,9 @@ resource nicvm 'Microsoft.Network/networkInterfaces@2020-07-01' = {
 }
 
 var nicNameLinux = 'nic-linux-'
-param linuxVMCount int = 2
+
 // https://github.com/microsoft/Federal-App-Innovation-Community/blob/2f31d83a1f1b86753349a437538984206b620964/topics/kubernetes/solutions/aro-kubernetes/hub-spoke-deployment/landing-zone.bicep#L569
-resource nicNameLinuxResource 'Microsoft.Network/networkInterfaces@2020-07-01' = [for i in range(0, linuxVMCount): {
+resource nicNameLinuxResource 'Microsoft.Network/networkInterfaces@2020-07-01' = [for i in range(0, controllercount): {
   name: '${nicNameLinux}${i + 1}'
   location: location
   properties: {
@@ -228,71 +229,15 @@ var commonProfile = {
    }
 }
 
-// resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-//   name      : '${vmname}_worker'
-//   location  : location
-//   tags : {
-//     applicationRole: 'worker'
-//   }
-//   properties: {
-//     // hardwareProfile: {
-//     //   //vmSize: 'Standard_B2ms'
-//     //   vmSize: 'Standard_D8_v5'
-//     // }
-//     hardwareProfile : commonProfile.hardwareProfile
-//     storageProfile : commonProfile.storageProfile
-//     osProfile: commonProfile.osProfile
-//     // storageProfile: {
-//     //   imageReference: {
-//     //     publisher: 'Canonical'
-//     //     offer: '0001-com-ubuntu-server-focal'
-//     //     sku: '20_04-lts'
-//     //     version: 'latest'
-//     //   }
-//     //   osDisk: {
-//     //     name: '${vmname}-osdisk-worker'
-//     //     createOption: 'FromImage'
-//     //     caching: 'ReadWrite'
-//     //     managedDisk: {
-//     //       // storageAccountType: 'Premium_LRS'  // Standard_D8_v5 does not support premium storage
-//     //       storageAccountType: 'Standard_LRS'
-//     //     }
-//     //     diskSizeGB: 64
-//     //   }
-//     // }
-//     // osProfile: {
-//     //   computerName : vmname
-//     //   adminUsername: vmuser
-//     //   //adminPassword: vmpass
-//     //   // TODO: Re-enable SSH authentication
-//     //   linuxConfiguration: {
-//     //     // disablePasswordAuthentication: true
-//     //     ssh: {
-//     //       publicKeys: [
-//     //         {
-//     //           path: '/home/${vmuser}/.ssh/authorized_keys'
-//     //           keyData: publickey
-//     //         }
-//     //       ]
-//     //     }
-//     //   }
-//     //   customData: base64(loadTextContent('cloud-init.yaml'))
-//     networkProfile: {
-//       networkInterfaces: [
-//         {
-//           id: nicvm.id
-//         }
-//       ]
-//     }
-//   }
-// }
-
-resource vmNameLinuxResource 'Microsoft.Compute/virtualMachines@2019-07-01' = [for i in range(0, linuxVMCount): {
+resource vmNameLinuxResource 'Microsoft.Compute/virtualMachines@2019-07-01' = [for i in range(0, controllercount): {
   name: '${vmname}worker${i + 1}'
   location: location
   dependsOn:[
     nicNameLinuxResource
   ]
+  tags : {
+    applicationRole: 'worker'
+  }
   properties: {
     hardwareProfile : commonProfile.hardwareProfile
     storageProfile : commonProfile.storageProfile

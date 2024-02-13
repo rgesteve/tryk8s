@@ -32,9 +32,14 @@ From there you can log on to any of the workers using their private IP:
 ssh <private_ip_of_worker>
 ```
 
+You can get a list of the deployed VMs, along with their private IPs like so:
+```
+az vm list -g $RGNAME -d --query "[?tags.applicationRole=='controller'].{name: name, pip: privateIps}" -o tsv
+```
+
 ## KNOWN ISSUES
 
-* If you get a 'core quota exceeded' error, balance the `linuxVMCount` parameter with the VM size (in `commonProfile.hardwareProfile`)
+* If you get a 'core quota exceeded' error, balance the `controllercount` parameter with the VM size (in `commonProfile.hardwareProfile`)
 
 ## TODO
 
