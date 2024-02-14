@@ -1,0 +1,15 @@
+
+- name: check OS
+  shell:
+    cmd: ". /etc/os-release; echo $ID_LIKE"
+    executable: /bin/bash
+  register: os
+
+- name: check apt-get/yum update functions
+  action: "{{ (os.stdout == 'debian') | ternary('apt','yum) }} | update_cache=true"
+  register: pkgrc
+  until: pkgrc is success
+  delay: 10
+  retries: 10
+  become: yes
+  

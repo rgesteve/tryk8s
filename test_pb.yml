@@ -2,10 +2,16 @@
 - hosts: all
   # any_errors_fatal: true
   # gather_facts: no
-  become: true
+  # become: true
   tasks:
 
     - name: Ensure wget is installed
+      become: true
       apt:
         name: wget
         state: present
+
+    - name: Check for essentials
+      include_role:
+        name: check
+
