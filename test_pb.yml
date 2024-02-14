@@ -15,3 +15,12 @@
       include_role:
         name: check
 
+- hosts: workers
+  # remote_user: james
+  tasks:
+  - name: Simple connection test
+    ansible.builtin.ping:
+    #remote_user: james
+  - name: run a simple command
+    ansible.builtin.shell: /bin/ls -al /nonexistent
+    ignore_errors: True
