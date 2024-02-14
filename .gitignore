@@ -1,2 +1,6 @@
 # Emacs backup files
 *~
+
+# Generated files
+ssh_config
+
