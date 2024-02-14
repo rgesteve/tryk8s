@@ -49,6 +49,11 @@ ssh -F ssh_config <any_worker>
 ```
 Note that the workers don't expose public IPs, so the controller is configured as a jumpbox.  Moreover, forwarding is enabled when you log on to the controller so that you can also log on any of the workers from there.
 
+For a quick test, you can run the following (note that `ansible` is installed with the virtual environment
+```
+ansible-playbook -i inventory.ini test_pb.yml
+```
+
 ## KNOWN ISSUES
 
 * If you get a 'core quota exceeded' error, balance the `controllercount` parameter with the VM size (in `commonProfile.hardwareProfile`)
@@ -57,4 +62,6 @@ Note that the workers don't expose public IPs, so the controller is configured a
 
 * Use appropriate hostnames
 * Add ansible-based configuration to provision k8s packages
+* Generate inventory file dynamically (also may need to templatize "ansible.cfg")
+
 

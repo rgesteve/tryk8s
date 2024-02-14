@@ -1,0 +1,11 @@
+
+- hosts: all
+  # any_errors_fatal: true
+  # gather_facts: no
+  become: true
+  tasks:
+
+    - name: Ensure wget is installed
+      apt:
+        name: wget
+        state: present

@@ -4,3 +4,7 @@
 # Generated files
 ssh_config
 
+# Virtual environment artifacts
+.venv/
+
+
