@@ -15,6 +15,11 @@
       include_role:
         name: check
 
+    - name: Check hostname restrictions
+      include_role:
+        name: check
+        tasks_from: check-host
+
 - hosts: workers
   # remote_user: james
   tasks:
