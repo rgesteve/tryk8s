@@ -47,7 +47,7 @@ which creates a file "ssh_config" that you can use like:
 ssh -F ssh_config controller
 ssh -F ssh_config <any_worker>
 ```
-Note that the workers don't expose public IPs, so the controller is configured as a jumpbox.  Moreover, forwarding is enabled when you log on to the controller so that you can also log on any of the workers from there.
+Note that the workers don't expose public IPs, so the controller is configured as a jumpbox.  Moreover, forwarding (`-A`) is enabled when you log on to the controller so that you can also log on any of the workers from there.
 
 For a quick test, you can run the following (note that `ansible` is installed with the virtual environment
 ```
@@ -60,8 +60,10 @@ ansible-playbook -i inventory.ini test_pb.yml
 
 ## TODO
 
-* Use appropriate hostnames
+* Use appropriate (RFC1178-compliant) hostnames
 * Add ansible-based configuration to provision k8s packages
 * Generate inventory file dynamically (also may need to templatize "ansible.cfg")
+* Create a devcontainer with venv and VSCode-based environment
+
 
 
