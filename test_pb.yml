@@ -1,7 +1,7 @@
 
 - hosts: all
   # any_errors_fatal: true
-  # gather_facts: no
+  gather_facts: true
   # become: true
   tasks:
 
@@ -20,6 +20,16 @@
         name: check
         tasks_from: check-host
 
+    - name: Check ssh status
+      systemd:
+        name: sshd
+        state: started
+    #   check: true
+    #   register: sshd_service
+    # - name: Debugging output
+    #   debug:
+    #     msg: "{ssh_service.status.ExecMainStartTimestamp}"
+
 - hosts: workers
   # remote_user: james
   tasks:
@@ -29,3 +39,15 @@
   - name: run a simple command
     ansible.builtin.shell: /bin/ls -al /nonexistent
     ignore_errors: True
+
+- hosts: localhost
+  connection: local
+  become: no
+  tasks:
+  - name: Test localhost debug consoloe
+    ansible.builtin.debug:
+      msg: |
+        "Hello world!"
+#     stat:
+#       path "ssh_config"
+#     register: sshconfig
