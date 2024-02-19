@@ -54,6 +54,11 @@ For a quick test, you can run the following (note that `ansible` is installed wi
 ansible-playbook -i inventory.ini test_pb.yml
 ```
 
+If you get errors about man-in-the-middle attacks, you may be using an outdated key, try issuing
+```
+ssh-keygen -f "~/.ssh/known_hosts" -R <problematic_ip>
+```
+
 ## KNOWN ISSUES
 
 * If you get a 'core quota exceeded' error, balance the `controllercount` parameter with the VM size (in `commonProfile.hardwareProfile`)
